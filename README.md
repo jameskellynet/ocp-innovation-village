@@ -27,17 +27,21 @@ apps-script/Code.gs        Backend receiver for all forms
 1. Copy `forms/emea-2027-iv/` to a new folder, e.g. `forms/global-2027-iv/`.
 2. Edit `config.js`: `formId`, Summit name, dates, deadline, categories, timeline, eligibility.
 3. Update the `<title>` in that folder's `index.html`.
-4. Create the Summit's Google Sheet and add a line to `FORMS` in `apps-script/Code.gs` with its spreadsheet ID and closing time. Redeploy the script as a new version (the URL stays the same).
+4. Create the Summit's Google Sheet (blank) and add a line to `FORMS` in `apps-script/Code.gs` with its spreadsheet ID and closing time. In the Apps Script editor, run `setupSheets` once to add the headers and formatting, then redeploy the script as a new version (the URL stays the same).
 5. Set `endpoint` in `config.js` to the script URL and add the form to `index.html`.
 
 ## Deploy the backend (once)
 
 1. Open [script.google.com](https://script.google.com) from a shared OCP events account and create a project.
-2. Paste `apps-script/Code.gs`, fill in the Sheet IDs.
+2. Paste `apps-script/Code.gs`, fill in the Sheet IDs, and run `setupSheets` once.
 3. **Deploy → New deployment → Web app**. Execute as: *Me*. Who has access: *Anyone*.
 4. Copy the `/exec` URL into each form's `config.js` as `endpoint`.
 
 While `endpoint` is empty, a form runs in preview mode and sends nothing.
+
+## Sheet layout
+
+`setupSheets` creates a **Submissions** tab with one column per form answer, followed by staff columns (Review Status dropdown, Notes, Acceptance Notice Sent and Confirmed checkboxes). The form only ever writes the answer columns, so staff edits are never overwritten.
 
 ## Turn on GitHub Pages
 

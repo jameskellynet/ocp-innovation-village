@@ -36,7 +36,67 @@ const COLUMNS = [
   ['Privacy & T&C accepted', d => d.consent ? 'Yes' : 'No'],
 ];
 
+// Staff columns after the form columns. The form never writes these; reviewers and Claude do.
+const STAFF_COLUMNS = ['Review Status', 'Notes', 'Acceptance Notice Sent', 'Confirmed'];
+const STATUS_OPTIONS = ['New', 'Under review', 'Accepted', 'Waitlist', 'Declined', 'Withdrawn'];
+
 const LIMITS = { abstract: 1000, whyDemo: 500, takeaway: 500 };
+
+/**
+ * Run once from the Apps Script editor (select setupSheets → Run) after adding a Sheet to FORMS.
+ * Safe to re-run: Sheets that already have headers are left alone.
+ */
+function setupSheets() {
+  const done = [];
+  for (const [formId, form] of Object.entries(FORMS)) {
+    if (form.sheetId.startsWith('PASTE_')) continue;
+    const ss = SpreadsheetApp.openById(form.sheetId);
+    let sh = ss.getSheetByName(form.tab);
+    if (!sh) {
+      const first = ss.getSheets()[0];
+      if (ss.getSheets().length === 1 && first.getLastRow() === 0) sh = first.setName(form.tab);
+      else sh = ss.insertSheet(form.tab, 0);
+    }
+    if (sh.getLastRow() > 0) { done.push(`${formId}: already set up`); continue; }
+
+    const headers = COLUMNS.map(c => c[0]).concat(STAFF_COLUMNS);
+    const n = headers.length, nForm = COLUMNS.length;
+    sh.getRange(1, 1, 1, n).setValues([headers])
+      .setFontWeight('bold').setFontColor('#FFFFFF').setBackground('#19194D')
+      .setWrap(true).setVerticalAlignment('middle');
+    sh.getRange(1, nForm + 1, 1, STAFF_COLUMNS.length).setBackground('#343895');   // staff columns
+    sh.setRowHeight(1, 42);
+    sh.setFrozenRows(1);
+    sh.setFrozenColumns(2);
+
+    // Column widths and text wrapping for long answers
+    const widths = { 'Submission Date': 150, 'Reference': 100, 'Email': 220, 'Station / Demo Title': 260,
+      'Category': 200, 'Abstract': 420, 'Why a demo, not a presentation': 320, 'Attendee takeaway': 320,
+      'Equipment': 280, 'Proposed Presenters': 280, 'Notes': 300 };
+    headers.forEach((h, i) => sh.setColumnWidth(i + 1, widths[h] || 140));
+    const body = sh.getRange(2, 1, sh.getMaxRows() - 1, n);
+    body.setVerticalAlignment('top').setWrap(true);
+    sh.getRange(2, 1, sh.getMaxRows() - 1, 1).setNumberFormat('yyyy-mm-dd hh:mm');
+
+    // Staff columns: status dropdown and checkboxes
+    const col = h => headers.indexOf(h) + 1, rows = sh.getMaxRows() - 1;
+    sh.getRange(2, col('Review Status'), rows, 1).setDataValidation(
+      SpreadsheetApp.newDataValidation().requireValueInList(STATUS_OPTIONS, true).setAllowInvalid(false).build());
+    // Checkbox validation without values, so empty rows stay empty and new submissions append at the top
+    const box = SpreadsheetApp.newDataValidation().requireCheckbox().build();
+    sh.getRange(2, col('Acceptance Notice Sent'), rows, 1).setDataValidation(box);
+    sh.getRange(2, col('Confirmed'), rows, 1).setDataValidation(box);
+
+    // Status colors
+    const st = sh.getRange(2, col('Review Status'), rows, 1);
+    const rule = (text, bg) => SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo(text).setBackground(bg).setRanges([st]).build();
+    sh.setConditionalFormatRules([rule('Accepted', '#DDEFC7'), rule('Waitlist', '#FDEFC9'), rule('Declined', '#F3D9D9'), rule('Under review', '#E6E7F4')]);
+
+    sh.getRange(2, 1, rows, n).applyRowBanding(SpreadsheetApp.BandingTheme.LIGHT_GREY, false, false);
+    done.push(`${formId}: set up "${form.tab}" in ${ss.getName()}`);
+  }
+  Logger.log(done.join('\n'));
+}
 
 function doPost(e) {
   try {
