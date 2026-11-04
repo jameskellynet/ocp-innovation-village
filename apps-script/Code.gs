@@ -14,13 +14,13 @@
 const FORMS = {
   'emea-2027-iv': {
     sheetId: '1V1YS5CcBHaC5LiAbBfJOgsRcLpqAQRy97fISHUt4oqo', tab: 'Submissions',
-    summit: 'OCP EMEA Summit 2027', location: 'Hamburg, Germany', closes: '2027-01-12T07:59:00Z',
+    summit: '2027 OCP EMEA Summit', location: 'Hamburg, Germany', closes: '2027-01-12T07:59:00Z',
     // Dates shown in the confirmation email's "What happens next"
     timeline: [['Jan 11, 2027', 'Call for demos closes, 11:59 PM PT'], ['Week of Feb 1', 'Decision emails go out'], ['Apr 6–8, 2027', 'OCP EMEA Summit, Hamburg, Germany']],
   },
   'global-2027-iv': {
     sheetId: 'PASTE_GLOBAL_2027_SHEET_ID', tab: 'Submissions',
-    summit: 'OCP Global Summit 2027', location: 'San Jose, California', closes: '2027-06-01T06:59:00Z',
+    summit: '2027 OCP Global Summit', location: 'San Jose, California', closes: '2027-06-01T06:59:00Z',
     timeline: [],
   },
 };

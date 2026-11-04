@@ -1,8 +1,8 @@
-/* OCP EMEA Summit 2027 · Innovation Village call for demos.
+/* 2027 OCP EMEA Summit · Innovation Village call for demos.
    Copy this folder to start a new Summit form; edit only this file. */
 window.FORM_CONFIG = {
   formId: "emea-2027-iv",
-  summit: "OCP EMEA Summit 2027",
+  summit: "2027 OCP EMEA Summit",
   location: "Hamburg, Germany",
   dates: "April 6–8, 2027",
   program: "Innovation Village",
