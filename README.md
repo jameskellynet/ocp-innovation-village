@@ -47,6 +47,10 @@ While `endpoint` is empty, a form runs in preview mode and sends nothing.
 
 Settings → Pages → Build and deployment → Deploy from a branch → `main` / root.
 
+## Caching
+
+GitHub Pages lets browsers cache files for 10 minutes. Each page loads its CSS and scripts with a `?v=` stamp; when you change `form.js`, `form.css` or a `config.js`, bump the stamp in the pages that load them so visitors get a matching set straight away.
+
 ## Brand notes
 
 Colors follow *OCP Brand Guidelines v3-1*, p.24: primary green `#8DC63F`, gray `#5F6062`, white, and the secondary indigo trio `#343895`, `#262673`, `#19194D`. Type is Franklin Gothic where installed, falling back to Libre Franklin (open-source revival). To serve licensed Franklin Gothic web fonts, add them under `assets/fonts/` and an `@font-face` rule in `form.css`.
