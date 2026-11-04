@@ -57,7 +57,8 @@ function collect(){
   const cat=document.querySelector('input[name=category]:checked');
   return {formId:C.formId,firstName:v("firstName"),lastName:v("lastName"),email:v("email"),company:v("company"),jobTitle:v("jobTitle"),
     title:v("title"),category:cat?cat.value:"",abstract:v("abstract"),whyDemo:v("whyDemo"),takeaway:v("takeaway"),
-    equipment:v("equipment"),presenters,eligibilityConfirmed:true,consent:$("consent").checked,website:$("website").value};
+    equipment:v("equipment"),presenters,eligibilityConfirmed:true,consent:$("consent").checked,website:$("website").value,
+    ...(EDIT ? {editRef:EDIT.ref, editToken:EDIT.t} : {})};
 }
 function validate(){
   let first=null;
@@ -100,12 +101,13 @@ $("confirmBtn").onclick=async()=>{
       const j=await r.json(); if(!j.ok)throw new Error(j.error||"The server did not accept the submission."); ref=j.ref||ref;
     }
     $("doneName").textContent=data.firstName;$("doneRef").textContent=ref;$("doneEmail").textContent=data.email;
+    if(EDIT){$("doneTitle").textContent="Submission updated";$("doneLead").textContent="Your changes are saved. A confirmation of the updated submission is on its way to";}
     $("doneNotify").textContent=C.notifyLabel;$("demoNote").hidden=!!C.endpoint;
     $("review").hidden=true;$("done").hidden=false;window.scrollTo({top:$("done").offsetTop-20,behavior:"smooth"});
   }catch(err){$("sendErr").textContent=`Your submission was not sent: ${err.message} Please try again in a minute.`;}
-  finally{b.disabled=false;b.textContent="Confirm my submission";}
+  finally{b.disabled=false;b.textContent=EDIT?"Save my changes":"Confirm my submission";}
 };
-$("againBtn").onclick=()=>{$("form").reset();$("presenters").innerHTML="";pCount=0;addPresenter();
+$("againBtn").onclick=()=>{if(EDIT){location.href=location.pathname;return;}$("form").reset();$("presenters").innerHTML="";pCount=0;addPresenter();
   document.querySelectorAll("[data-max] textarea").forEach(t=>t.dispatchEvent(new Event("input")));
   $("done").hidden=true;$("form").hidden=false;$("previewBar").hidden=!!C.endpoint;window.scrollTo({top:0});};
 
@@ -124,5 +126,34 @@ $("sampleBtn").onclick=()=>{
   document.querySelectorAll("[data-max] textarea").forEach(t=>t.dispatchEvent(new Event("input")));
   document.querySelectorAll(".invalid").forEach(f=>f.classList.remove("invalid"));
 };
+
+
+/* ===== Edit mode: opened from the private link in a receipt (?edit=<reference>&t=<signature>) ===== */
+var EDIT = null;
+(async function(){
+  const q = new URLSearchParams(location.search), ref = q.get("edit"), t = q.get("t");
+  if (!ref || !t || !C.endpoint || isClosed()) return;
+  const bar = $("editBar"), form = $("form");
+  form.hidden = true; bar.hidden = false; bar.textContent = `Loading submission ${ref}…`;
+  try {
+    const u = `${C.endpoint}?action=load&formId=${encodeURIComponent(C.formId)}&ref=${encodeURIComponent(ref)}&t=${encodeURIComponent(t)}`;
+    const j = await (await fetch(u)).json();
+    if (!j.ok) throw new Error(j.error || "This edit link could not be opened.");
+    const d = j.data;
+    ["firstName","lastName","email","company","jobTitle","title","abstract","whyDemo","takeaway","equipment"].forEach(k => { $(k).value = d[k] || ""; });
+    const cat = [...document.querySelectorAll("input[name=category]")].find(r => r.value === d.category); if (cat) cat.checked = true;
+    $("presenters").innerHTML = ""; pCount = 0;
+    (d.presenters && d.presenters.length ? d.presenters : [{}]).forEach(p => addPresenter(p));
+    document.querySelectorAll("[data-max] textarea").forEach(x => x.dispatchEvent(new Event("input")));
+    EDIT = {ref, t};
+    bar.innerHTML = "";
+    const b = document.createElement("strong"); b.textContent = `Editing submission ${ref}. `;
+    bar.append(b, "Change what you need, tick the eligibility and consent boxes again, then review and save. Your original submission date stays the same.");
+    $("reviewBtn").textContent = "Review my changes"; $("confirmBtn").textContent = "Save my changes";
+    form.hidden = false;
+  } catch (err) {
+    bar.textContent = `${err.message} You can still start a new submission from this page's address without the link.`;
+  }
+})();
 
 })();

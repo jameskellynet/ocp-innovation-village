@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&family=Open+Sans:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../assets/form.css?v=2026110412412">
+<link rel="stylesheet" href="../../assets/form.css?v=2026110413053">
 </head>
 <body>
 <div class="logobar">
@@ -29,6 +29,7 @@
 
 <main class="wrap grid">
   <div>
+    <div class="preview editbar" id="editBar" role="status" hidden></div>
     <div class="preview" id="previewBar" hidden>
       <span>Preview mode: submissions from this page are not sent anywhere.</span>
       <button type="button" class="linkbtn" id="sampleBtn">Fill with a sample entry</button>
@@ -120,8 +121,8 @@
 
     <section class="step done" id="done" hidden>
       <div class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#19194D" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <h2 style="font-size:28px">Submission received</h2>
-      <p>Thanks, <span id="doneName"></span>. Your reference is <span class="ref" id="doneRef"></span>. A confirmation is on its way to <strong id="doneEmail"></strong>.</p>
+      <h2 style="font-size:28px" id="doneTitle">Submission received</h2>
+      <p>Thanks, <span id="doneName"></span>. Your reference is <span class="ref" id="doneRef"></span>. <span id="doneLead">A confirmation is on its way to</span> <strong id="doneEmail"></strong>.</p>
       <p class="hint" id="doneNotify"></p>
       <p class="demo-note" id="demoNote" hidden>Preview mode: nothing was sent. Once the page has a backend address, this step writes a row to the Summit's Google Sheet.</p>
       <div class="actions"><button type="button" class="btn ghost" id="againBtn">Start another submission</button></div>
@@ -145,7 +146,7 @@
 </main>
 
 <footer><div class="wrap" id="footer"></div></footer>
-<script src="config.js?v=2026110412412"></script>
-<script src="../../assets/form.js?v=2026110412412"></script>
+<script src="config.js?v=2026110413053"></script>
+<script src="../../assets/form.js?v=2026110413053"></script>
 </body>
 </html>

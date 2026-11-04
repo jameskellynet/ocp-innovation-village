@@ -144,3 +144,4 @@ input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 
 footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px}
 footer .wrap{padding-block:24px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.preview.editbar{display:block;border-style:solid;border-left:4px solid var(--mark);background:var(--surface);color:var(--ink)}
