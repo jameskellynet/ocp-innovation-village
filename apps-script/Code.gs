@@ -12,7 +12,7 @@
 
 // ---- Add one line per Summit/form. The spreadsheet ID is the long string in the Sheet's URL.
 const FORMS = {
-  'emea-2027-iv':   { sheetId: 'PASTE_EMEA_2027_SHEET_ID',   tab: 'Submissions', summit: 'OCP EMEA Summit 2027',   closes: '2027-01-12T07:59:00Z' },
+  'emea-2027-iv':   { sheetId: '1V1YS5CcBHaC5LiAbBfJOgsRcLpqAQRy97fISHUt4oqo',   tab: 'Submissions', summit: 'OCP EMEA Summit 2027',   closes: '2027-01-12T07:59:00Z' },
   'global-2027-iv': { sheetId: 'PASTE_GLOBAL_2027_SHEET_ID', tab: 'Submissions', summit: 'OCP Global Summit 2027', closes: '2027-06-01T06:59:00Z' },
 };
 
