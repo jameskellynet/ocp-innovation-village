@@ -125,7 +125,8 @@ function doPost(e) {
       const ss = SpreadsheetApp.openById(form.sheetId);
       const sh = ss.getSheetByName(form.tab) || ss.insertSheet(form.tab);
       if (sh.getLastRow() === 0) sh.appendRow(COLUMNS.map(c => c[0]));
-      sh.appendRow(COLUMNS.map(c => c[1](d)).concat(['New']));   // Review Status starts as New
+      const values = COLUMNS.map(c => c[1](d)).concat(['New']);   // Review Status starts as New
+      sh.getRange(nextRow(sh), 1, 1, values.length).setValues([values]);
     } finally {
       lock.releaseLock();
     }
@@ -143,6 +144,19 @@ function doPost(e) {
   } catch (err) {
     return reply({ ok: false, error: 'Something went wrong on our side.' });
   }
+}
+
+// The row after the last submission, found by the Reference column (B).
+// Checkbox cells in the staff columns hold FALSE on every row, so getLastRow() can't be used.
+function nextRow(sh) {
+  const max = sh.getMaxRows();
+  const refs = max > 1 ? sh.getRange(2, 2, max - 1, 1).getValues() : [];
+  let last = 1;                                   // header row
+  for (let i = refs.length - 1; i >= 0; i--) {
+    if (refs[i][0] !== '') { last = i + 2; break; }
+  }
+  if (last + 1 > max) sh.insertRowsAfter(max, 100);
+  return last + 1;
 }
 
 function reply(obj) {
