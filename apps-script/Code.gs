@@ -12,9 +12,22 @@
 
 // ---- Add one line per Summit/form. The spreadsheet ID is the long string in the Sheet's URL.
 const FORMS = {
-  'emea-2027-iv':   { sheetId: '1V1YS5CcBHaC5LiAbBfJOgsRcLpqAQRy97fISHUt4oqo',   tab: 'Submissions', summit: 'OCP EMEA Summit 2027',   closes: '2027-01-12T07:59:00Z' },
-  'global-2027-iv': { sheetId: 'PASTE_GLOBAL_2027_SHEET_ID', tab: 'Submissions', summit: 'OCP Global Summit 2027', closes: '2027-06-01T06:59:00Z' },
+  'emea-2027-iv': {
+    sheetId: '1V1YS5CcBHaC5LiAbBfJOgsRcLpqAQRy97fISHUt4oqo', tab: 'Submissions',
+    summit: 'OCP EMEA Summit 2027', location: 'Hamburg, Germany', closes: '2027-01-12T07:59:00Z',
+    // Dates shown in the confirmation email's "What happens next"
+    timeline: [['Jan 11, 2027', 'Call for demos closes, 11:59 PM PT'], ['Week of Feb 1', 'Decision emails go out'], ['Apr 6–8, 2027', 'OCP EMEA Summit, Hamburg, Germany']],
+  },
+  'global-2027-iv': {
+    sheetId: 'PASTE_GLOBAL_2027_SHEET_ID', tab: 'Submissions',
+    summit: 'OCP Global Summit 2027', location: 'San Jose, California', closes: '2027-06-01T06:59:00Z',
+    timeline: [],
+  },
 };
+
+// Logos for the confirmation email, attached inline so they show even when remote images are blocked.
+const SITE = 'https://jameskellynet.github.io/ocp-innovation-village/';
+const LOGOS = { ocpLogo: SITE + 'assets/ocp-logo.png', ivLogo: SITE + 'assets/iv-logo.png' };
 
 // Column order in every Sheet. Matches the fields the form sends.
 const COLUMNS = [
@@ -100,6 +113,15 @@ function setupSheets() {
   Logger.log(done.join('\n'));
 }
 
+/**
+ * Run once from the editor after pasting a new version (select authorize → Run), so Google asks
+ * for any new permission (fetching the email logos) before a live submission needs it.
+ */
+function authorize() {
+  UrlFetchApp.fetch(LOGOS.ocpLogo);
+  Logger.log('Permissions OK. Email quota left today: ' + MailApp.getRemainingDailyQuota());
+}
+
 function doPost(e) {
   try {
     const d = JSON.parse(e.postData.contents);
@@ -131,19 +153,64 @@ function doPost(e) {
       lock.releaseLock();
     }
 
-    MailApp.sendEmail({
-      to: d.email,
-      subject: `${form.summit} Innovation Village – submission received (${d._ref})`,
-      body: `Hi ${d.firstName},\n\nThanks for proposing "${d.title}" for the ${form.summit} Innovation Village.\n` +
-            `Your reference is ${d._ref}. The OCP Program Committee will review all submissions and notify you by email.\n\n` +
-            `OCP Events Team`,
-      name: 'OCP Events',
-    });
+    sendReceipt(d, form);
 
     return reply({ ok: true, ref: d._ref });
   } catch (err) {
     return reply({ ok: false, error: 'Something went wrong on our side.' });
   }
+}
+
+// Branded confirmation email: HTML with a plain-text fallback and inline logos.
+function sendReceipt(d, form) {
+  const esc = v => String(v || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const when = Utilities.formatDate(new Date(), 'America/Los_Angeles', 'MMMM d, yyyy');
+  const images = {};
+  for (const [cid, url] of Object.entries(LOGOS)) {
+    try { images[cid] = UrlFetchApp.fetch(url).getBlob().setName(cid + '.png'); } catch (e) { /* send without that logo */ }
+  }
+  const logo = (cid, w, h, alt) => images[cid] ? `<img src="cid:${cid}" width="${w}" height="${h}" alt="${alt}" style="display:block;border:0;">` : `<span style="font:bold 14px Arial,sans-serif;color:#5F6062;">${alt}</span>`;
+  const label = 'font:bold 11px Arial,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#343895;';
+  const row = (k, v, last) => `<tr><td style="padding:6px 16px${last ? ' 14px' : ''};color:#5F6062;width:120px;">${k}</td><td style="padding:6px 16px${last ? ' 14px' : ''};color:#19194D;${k === 'Reference' ? 'font-weight:bold;' : ''}">${v}</td></tr>`;
+  const steps = (form.timeline || []).map((t, i, a) => {
+    const b = i < a.length - 1 ? 'border-bottom:1px solid #EEF0F2;' : '';
+    return `<tr><td style="padding:8px 0;${b}width:130px;color:#19194D;font-weight:bold;">${esc(t[0])}</td><td style="padding:8px 0;${b}">${esc(t[1])}</td></tr>`;
+  }).join('');
+
+  const html = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#E9EBEF;"><tr><td align="center">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#FFFFFF;border-collapse:collapse;">
+<tr><td style="padding:16px 32px;border-bottom:1px solid #DADCDF;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+<td align="left" valign="middle">${logo('ocpLogo', 100, 40, 'Open Compute Project')}</td>
+<td align="right" valign="middle">${logo('ivLogo', 118, 48, 'OCP Innovation Village')}</td></tr></table></td></tr>
+<tr><td style="background:#19194D;padding:28px 32px 26px;border-bottom:6px solid #8DC63F;">
+<div style="font:bold 11px/1.4 Arial,sans-serif;letter-spacing:3px;text-transform:uppercase;color:#8DC63F;">${esc(form.summit)} · Innovation Village</div>
+<div style="font:bold 26px/1.2 'Franklin Gothic Medium','Arial Narrow',Arial,sans-serif;letter-spacing:1.5px;text-transform:uppercase;color:#FFFFFF;margin-top:10px;">Submission received</div></td></tr>
+<tr><td style="padding:28px 32px 8px;font:15px/1.6 Arial,sans-serif;color:#3F4042;">
+<p style="margin:0 0 14px;">Hi ${esc(d.firstName)},</p>
+<p style="margin:0 0 22px;">Thanks for proposing a demo station for the ${esc(form.summit)} Innovation Village. The Program Committee will review every submission after the call closes and email you with a decision.</p></td></tr>
+<tr><td style="padding:0 32px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #DADCDF;border-top:3px solid #343895;font:14px/1.5 Arial,sans-serif;">
+<tr><td style="padding:12px 16px 4px;${label}" colspan="2">Your submission</td></tr>
+${row('Reference', esc(d._ref))}${row('Demo title', esc(d.title))}${row('Category', esc(d.category))}${row('Submitted', when, true)}
+</table></td></tr>
+${steps ? `<tr><td style="padding:26px 32px 6px;${label}">What happens next</td></tr><tr><td style="padding:0 32px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font:14px/1.5 Arial,sans-serif;color:#3F4042;">${steps}</table></td></tr>` : ''}
+<tr><td style="padding:22px 32px 28px;font:14px/1.6 Arial,sans-serif;color:#3F4042;">Need to change something? Reply to this email and quote your reference.</td></tr>
+<tr><td style="background:#F3F4F5;padding:18px 32px;font:12px/1.6 Arial,sans-serif;color:#5F6062;border-top:1px solid #DADCDF;">Open Compute Project Foundation · <a href="${SITE}" style="color:#343895;">All Innovation Village calls for demos</a><br>You are receiving this because you submitted a proposal for the OCP Innovation Village.</td></tr>
+</table></td></tr></table>`;
+
+  const text = `Hi ${d.firstName},\n\nThanks for proposing a demo station for the ${form.summit} Innovation Village. ` +
+    `The Program Committee will review every submission after the call closes and email you with a decision.\n\n` +
+    `YOUR SUBMISSION\nReference: ${d._ref}\nDemo title: ${d.title}\nCategory: ${d.category}\nSubmitted: ${when}\n\n` +
+    ((form.timeline || []).length ? `WHAT HAPPENS NEXT\n${form.timeline.map(t => `${t[0]}: ${t[1]}`).join('\n')}\n\n` : '') +
+    `Need to change something? Reply to this email and quote your reference.\n\nOpen Compute Project Foundation\n${SITE}`;
+
+  MailApp.sendEmail({
+    to: d.email,
+    subject: `${form.summit} Innovation Village – submission received (${d._ref})`,
+    body: text,
+    htmlBody: html,
+    inlineImages: images,
+    name: 'OCP Events',
+  });
 }
 
 // The row after the last submission, found by the Reference column (B).
