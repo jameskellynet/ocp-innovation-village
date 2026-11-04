@@ -11,6 +11,14 @@ $("deadlineText").textContent = C.deadlineLabel;
 $("tcLink").href = C.termsUrl;
 $("footer").textContent = `${C.summit} · ${C.program} · Questions? Contact the OCP events team.`;
 $("previewBar").hidden = !!C.endpoint;
+/* Closed: set closed:true in config.js, or the deadline has passed */
+const isClosed = () => C.closed === true || new Date() > new Date(C.deadline);
+function showClosed(){
+  $("form").hidden = true; $("previewBar").hidden = true; $("review").hidden = true;
+  $("closedText").textContent = `The deadline was ${C.deadlineLabel.replace(/^Submissions close /,'')}. ${C.notifyLabel || ''}`.trim();
+  $("closedNote").hidden = false;
+}
+if (isClosed()) showClosed();
 (function(){const d=Math.ceil((new Date(C.deadline)-new Date())/864e5);
   $("countdown").textContent = d>1?`${d} days left`:d===1?"Closes today":"Closed";})();
 
@@ -83,6 +91,7 @@ $("form").addEventListener("submit",e=>{
 $("editBtn").onclick=()=>{$("review").hidden=true;$("form").hidden=false;$("previewBar").hidden=!!C.endpoint;};
 
 $("confirmBtn").onclick=async()=>{
+  if(isClosed()){showClosed();return;}
   const b=$("confirmBtn");b.disabled=true;b.textContent="Sending…";$("sendErr").textContent="";
   let ref="IV-"+Date.now().toString(36).toUpperCase().slice(-6);
   try{

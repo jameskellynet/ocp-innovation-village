@@ -11,6 +11,7 @@ window.FORM_CONFIG = {
   deadline: "2027-01-12T07:59:00Z",           // Jan 11, 2027 11:59 PM PT
   deadlineLabel: "Submissions close January 11, 2027 at 11:59 PM PT",
   notifyLabel: "Submitters are notified of acceptance the week of February 1, 2027.",
+  closed: false,                             // set true to close the form early (a scheduled task does this at the deadline)
   endpoint: "https://script.google.com/macros/s/AKfycbw_JXUFqL7JnXTfyxoK8JBskcoP8H-N1KfBq_U8O_P91qCZcpslDsY15lOLw6Ssa0Zz/exec",   // Apps Script web-app URL; empty = preview mode
   termsUrl: "https://146a55aca6f00848c565-a7635525d40ac1c70300198708936b4e.ssl.cf1.rackcdn.com/images/91a3db54e7bd128a6ee1fbdf3299491b59e4be30.pdf",
   categories: ["AI & Machine Learning","Cooling & Thermal Management","DC Facilities & Power","Future Technologies Symposium (FTS) Demo","Networking","Server & Compute Hardware","Storage","Sustainability & Circular Economy","Security","Systems Management & Firmware","Other OCP Community Topics"],
