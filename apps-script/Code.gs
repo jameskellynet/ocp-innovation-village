@@ -60,7 +60,8 @@ function setupSheets() {
     if (sh.getLastRow() > 0) { done.push(`${formId}: already set up`); continue; }
 
     const headers = COLUMNS.map(c => c[0]).concat(STAFF_COLUMNS);
-    const n = headers.length, nForm = COLUMNS.length;
+    const n = headers.length;
+    const nForm = COLUMNS.length;
     sh.getRange(1, 1, 1, n).setValues([headers])
       .setFontWeight('bold').setFontColor('#FFFFFF').setBackground('#19194D')
       .setWrap(true).setVerticalAlignment('middle');
@@ -79,7 +80,8 @@ function setupSheets() {
     sh.getRange(2, 1, sh.getMaxRows() - 1, 1).setNumberFormat('yyyy-mm-dd hh:mm');
 
     // Staff columns: status dropdown and checkboxes
-    const col = h => headers.indexOf(h) + 1, rows = sh.getMaxRows() - 1;
+    const col = (h) => headers.indexOf(h) + 1;
+    const rows = sh.getMaxRows() - 1;
     sh.getRange(2, col('Review Status'), rows, 1).setDataValidation(
       SpreadsheetApp.newDataValidation().requireValueInList(STATUS_OPTIONS, true).setAllowInvalid(false).build());
     // Checkbox validation without values, so empty rows stay empty and new submissions append at the top
