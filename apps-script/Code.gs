@@ -123,7 +123,7 @@ function doPost(e) {
       const ss = SpreadsheetApp.openById(form.sheetId);
       const sh = ss.getSheetByName(form.tab) || ss.insertSheet(form.tab);
       if (sh.getLastRow() === 0) sh.appendRow(COLUMNS.map(c => c[0]));
-      sh.appendRow(COLUMNS.map(c => c[1](d)));
+      sh.appendRow(COLUMNS.map(c => c[1](d)).concat(['New']));   // Review Status starts as New
     } finally {
       lock.releaseLock();
     }
