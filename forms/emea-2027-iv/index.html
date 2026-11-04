@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>OCP EMEA 2027 Innovation Village · Call for Demos</title>
+<link rel="icon" href="../../assets/ocp-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&family=Open+Sans:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../assets/form.css">
+</head>
+<body>
+<div class="logobar">
+  <div class="wrap">
+    <a href="https://www.opencompute.org" target="_blank" rel="noopener" class="logo"><img src="../../assets/ocp-logo.png" alt="Open Compute Project" width="100" height="40"></a>
+    <div class="event" id="eventLine"></div>
+  </div>
+</div>
+<header class="band">
+  <div class="wrap">
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1 id="heading"></h1>
+    <p class="lede" id="lede"></p>
+    <div class="deadline"><b id="deadlineText"></b><span id="countdown"></span></div>
+  </div>
+</header>
+
+<main class="wrap grid">
+  <div>
+    <div class="preview" id="previewBar">
+      <span>Preview mode: submissions from this page are not sent anywhere.</span>
+      <button type="button" class="linkbtn" id="sampleBtn">Fill with a sample entry</button>
+    </div>
+
+    <form id="form" novalidate>
+      <input class="hp" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <section class="step">
+        <div class="stephead"><span class="stepno">STEP 1 OF 4</span><h2>About you</h2></div>
+        <p class="stepnote">We use these details to send your confirmation and the Program Committee's decision.</p>
+        <div class="fields">
+          <div class="two">
+            <label class="f" data-req><span class="lbl">First name<span class="req">*</span></span><input type="text" id="firstName" autocomplete="given-name"><span class="err">Enter your first name.</span></label>
+            <label class="f" data-req><span class="lbl">Last name<span class="req">*</span></span><input type="text" id="lastName" autocomplete="family-name"><span class="err">Enter your last name.</span></label>
+          </div>
+          <div class="two">
+            <label class="f" data-req data-email><span class="lbl">Work email<span class="req">*</span></span><input type="email" id="email" autocomplete="email"><span class="err">Enter a valid email address, like name@company.com.</span></label>
+            <label class="f" data-req><span class="lbl">Company<span class="req">*</span></span><input type="text" id="company" autocomplete="organization"><span class="err">Enter your company or organization.</span></label>
+          </div>
+          <label class="f" data-req><span class="lbl">Job title<span class="req">*</span></span><input type="text" id="jobTitle" autocomplete="organization-title"><span class="err">Enter your job title.</span></label>
+        </div>
+      </section>
+
+      <section class="step">
+        <div class="stephead"><span class="stepno">STEP 2 OF 4</span><h2>Your demo</h2></div>
+        <p class="stepnote">Stations are working demos that attendees engage with directly, not presentations or video loops.</p>
+        <div class="fields">
+          <label class="f" data-req><span class="lbl">Proposed station / demo title<span class="req">*</span></span><input type="text" id="title"><span class="err">Give your demo a title.</span></label>
+          <div class="f" data-req data-radio="category" role="group" aria-labelledby="catLbl" style="display:grid;gap:8px">
+            <span class="lbl" id="catLbl">Which category best describes your demo?<span class="req">*</span></span>
+            <div class="chips" id="categories"></div>
+            <span class="err">Choose one category.</span>
+          </div>
+          <label class="f" data-req data-max="1000"><span class="lbl">Abstract<span class="req">*</span></span><span class="hint">Describe what your station will demonstrate and how it works.</span><textarea id="abstract" rows="6"></textarea><span class="counter"></span><span class="err">Write an abstract of up to 1,000 characters.</span></label>
+          <label class="f" data-req data-max="500"><span class="lbl">Why is this a demo and not a presentation?<span class="req">*</span></span><span class="hint">Explain why this work must be experienced live and hands-on. What makes the interactive format essential?</span><textarea id="whyDemo" rows="4"></textarea><span class="counter"></span><span class="err">Answer in up to 500 characters.</span></label>
+          <label class="f" data-req data-max="500"><span class="lbl">What will attendees gain from the live demo?<span class="req">*</span></span><span class="hint">What will a visitor to your station be able to see, touch or do?</span><textarea id="takeaway" rows="4"></textarea><span class="counter"></span><span class="err">Answer in up to 500 characters.</span></label>
+        </div>
+      </section>
+
+      <section class="step">
+        <div class="stephead"><span class="stepno">STEP 3 OF 4</span><h2>Equipment and presenters</h2></div>
+        <p class="stepnote">Logistics help us plan floor space and power for the Expo Hall.</p>
+        <div class="fields">
+          <label class="f" data-req><span class="lbl">Equipment you will use<span class="req">*</span></span><span class="hint">For example: tabletop demo, estimated size and weight of larger equipment, power requirements.</span><textarea id="equipment" rows="4"></textarea><span class="err">Describe the equipment for your demo.</span></label>
+          <div style="display:grid;gap:10px">
+            <span class="lbl">Proposed presenters</span>
+            <span class="hint">People who will staff the station. Presenters must cover the full Expo Hall hours.</span>
+            <div class="presenters" id="presenters"></div>
+            <div><button type="button" class="btn ghost" id="addPresenter">Add presenter</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="step">
+        <div class="stephead"><span class="stepno">STEP 4 OF 4</span><h2>Eligibility and consent</h2></div>
+        <p class="stepnote">Confirm that your station meets each Innovation Village requirement.</p>
+        <div id="eligibility"></div>
+        <div class="consent">
+          <div class="check" id="consentRow" style="border:0;padding:0">
+            <input type="checkbox" id="consent">
+            <label for="consent" style="font-size:14px">I accept OCP's Privacy Policy and consent to the transfer of my personal information to the United States, which may have less protection than my jurisdiction of residence. I agree to the OCP event <a href="#" id="tcLink" target="_blank" rel="noopener">terms and conditions</a>.<span class="req" style="color:var(--accent)">*</span></label>
+          </div>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button type="submit" class="btn" id="reviewBtn">Review my submission</button>
+        <span class="formerr" id="formErr" role="alert"></span>
+      </div>
+    </form>
+
+    <section class="step review" id="review" hidden>
+      <div class="stephead"><span class="stepno">REVIEW</span><h2>Check everything before you confirm</h2></div>
+      <p class="stepnote">Your submission is not complete until you select <strong>Confirm my submission</strong>.</p>
+      <dl id="reviewList"></dl>
+      <div class="actions" style="margin-top:24px">
+        <button type="button" class="btn" id="confirmBtn">Confirm my submission</button>
+        <button type="button" class="btn ghost" id="editBtn">Edit</button>
+        <span class="formerr" id="sendErr" role="alert"></span>
+      </div>
+    </section>
+
+    <section class="step done" id="done" hidden>
+      <div class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#19194D" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h2 style="font-size:28px">Submission received</h2>
+      <p>Thanks, <span id="doneName"></span>. Your reference is <span class="ref" id="doneRef"></span>. A confirmation is on its way to <strong id="doneEmail"></strong>.</p>
+      <p class="hint" id="doneNotify"></p>
+      <p class="demo-note" id="demoNote" hidden>Preview mode: nothing was sent. Once the page has a backend address, this step writes a row to the Summit's Google Sheet.</p>
+      <div class="actions"><button type="button" class="btn ghost" id="againBtn">Start another submission</button></div>
+    </section>
+  </div>
+
+  <aside class="rail">
+    <div class="panel">
+      <h3>Key dates</h3>
+      <ol class="tl" id="timeline"></ol>
+    </div>
+    <div class="panel">
+      <h3>How stations are judged</h3>
+      <div class="score" id="scoring"></div>
+    </div>
+    <div class="panel">
+      <h3>Please note</h3>
+      <p class="hint" style="margin:0">Acceptance of a submission does not guarantee a station. The OCP Foundation and Program Committee make final selections based on quality, relevance and available space. Demonstrators cover their own travel and accommodation.</p>
+    </div>
+  </aside>
+</main>
+
+<footer><div class="wrap" id="footer"></div></footer>
+<script src="config.js"></script>
+<script src="../../assets/form.js"></script>
+</body>
+</html>
