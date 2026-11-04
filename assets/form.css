@@ -41,7 +41,8 @@ h1,h2,h3,.lbl{color:var(--ink)}
 .logobar{background:#FFFFFF;border-bottom:1px solid #DADCDF}
 .logobar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:12px}
 .logo{display:block;line-height:0}.logo img{height:40px;width:auto}
-.logobar .event{color:#5F6062}
+.logo.iv img{height:48px}
+.band .event{margin-top:10px}
 .event{font:500 12px/1.4 var(--f-mono);color:var(--band-muted);letter-spacing:.18em;text-transform:uppercase}
 .eyebrow{font:600 12px/1 var(--f-display);letter-spacing:.25em;text-transform:uppercase;color:var(--accent)}
 .band .eyebrow{color:var(--green)}
