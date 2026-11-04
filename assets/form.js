@@ -3,7 +3,7 @@
 const C = window.FORM_CONFIG;
 /* ===== Engine ===== */
 const $ = id => document.getElementById(id);
-$("eventLine").textContent = `${C.summit} · ${C.location} · ${C.dates}`;
+$("eventLine").textContent = `${C.location} · ${C.dates}`;
 $("eyebrow").textContent = `${C.summit} · ${C.program}`;
 $("heading").textContent = C.heading;
 $("lede").textContent = C.lede;
